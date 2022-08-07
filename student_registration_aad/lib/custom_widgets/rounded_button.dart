@@ -26,11 +26,11 @@ class RoundedButton extends StatelessWidget {
           child: Container(
             width: maxWidth ?? contraints.maxWidth * 0.5,
             margin: const EdgeInsets.symmetric(vertical: 5),
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
             decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: const [
                   BoxShadow(
                     blurRadius: 10,
                     offset: Offset(2, 2),
@@ -40,7 +40,7 @@ class RoundedButton extends StatelessWidget {
             child: child ??
                 Text(
                   text,
-                  style: TextStyle(color: Colors.white, fontSize: 25),
+                  style: const TextStyle(color: Colors.white, fontSize: 22),
                   textAlign: TextAlign.center,
                 ),
           ),

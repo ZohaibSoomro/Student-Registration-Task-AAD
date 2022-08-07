@@ -1,8 +1,8 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_registration_aad/pages/signup.dart';
 
+import '../custom_widgets/my_alert_box.dart';
 import '../custom_widgets/rounded_button.dart';
 import '../custom_widgets/rounded_text_field.dart';
 import '../database/student_db_helper.dart';
@@ -23,6 +23,8 @@ class _LoginState extends State<Login> {
   bool emailValidated = false;
   bool passValidated = false;
   final studentDbHelper = StudentDbHelper();
+  final MyAlertBox alertBox = MyAlertBox();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,80 +142,38 @@ class _LoginState extends State<Login> {
     });
   }
 
-  Future showAlertBox(
-    String errorText, {
-    Color labelColor = Colors.red,
-    bool showRegister = false,
-    int? disposeAfter,
-  }) async {
-    if (disposeAfter != null) {
-      Future.delayed(Duration(milliseconds: disposeAfter), () {
-        Navigator.pop(context);
-      });
-    }
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Colors.blue),
-        ),
-        elevation: 2,
-        title: Text(
-          errorText,
-          style: TextStyle(color: labelColor),
-        ),
-        actions: [
-          if (showRegister)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Signup()),
-                );
-              },
-              child: const Text('Register'),
-            ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Ok'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void onLoginButtonPressed() async {
     if (email.trim() == "") {
-      showAlertBox("Email can't be empty!");
+      alertBox.showAlertBox(context, "Email can't be empty!");
       return;
     }
     if (!EmailValidator.validate(email)) {
-      showAlertBox("Please provide a valid email!");
+      alertBox.showAlertBox(context, "Please provide a valid email!");
       return;
     }
     if (password.trim() == "") {
-      showAlertBox("Password can't be empty!");
+      alertBox.showAlertBox(context, "Password can't be empty!");
       return;
     }
     if (password.length < 6) {
-      showAlertBox("Password length can't be less than 6.");
+      alertBox.showAlertBox(context, "Password length can't be less than 6.");
+      return;
+    }
+    if (!emailValidated) {
+      alertBox.showAlertBox(
+        context,
+        "No any student record found with the email '$email'.\nTry registering yourself.",
+        showRegister: true,
+      );
       return;
     }
     final result =
         await Provider.of<StudentInfoProvider>(context, listen: false)
             .findStudent(email, password);
     if (result is String) {
-      if (result == StudentInfoProvider.notFound) {
-        showAlertBox(
-          'No any student record found with the email $email.',
-          showRegister: true,
-        );
-      } else if (result == StudentInfoProvider.passNotMatched) {
-        showAlertBox(
+      if (result == StudentInfoProvider.passNotMatched) {
+        alertBox.showAlertBox(
+          context,
           'Incorrect password! try again.',
         );
       }
@@ -223,20 +183,22 @@ class _LoginState extends State<Login> {
       if (!foundInDb) {
         int? affectedRows = await studentDbHelper.insertStudent(student);
         if (affectedRows! > 0) {
-          await showAlertBox(
+          await alertBox.showAlertBox(
+            context,
             'Data inserted from local into database.',
             labelColor: Colors.blue,
-            disposeAfter: 1000,
+            disposeAfterMillis: 1300,
           );
           Provider.of<StudentInfoProvider>(context, listen: false)
               .removeStudent(student);
           setState(() {});
         }
       }
-      await showAlertBox(
+      await alertBox.showAlertBox(
+        context,
         'Login Successful',
         labelColor: Colors.blue,
-        disposeAfter: 500,
+        disposeAfterMillis: 500,
       );
       Navigator.pushReplacement(
         context,
