@@ -264,7 +264,10 @@ class _SignupState extends State<Signup> {
       final localListContains =
           Provider.of<StudentInfoProvider>(context, listen: false)
               .containsStudent(email);
-      final foundInDb = await studentDbHelper.containsStudent(email);
+      bool foundInDb = false;
+      try {
+        foundInDb = await studentDbHelper.containsStudent(email);
+      } catch (e) {}
       if (!localListContains && !foundInDb) {
         emailValidated = true;
       } else {

@@ -1,10 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_registration_aad/pages/signup.dart';
 
 import '../custom_widgets/my_alert_box.dart';
 import '../custom_widgets/rounded_button.dart';
 import '../custom_widgets/rounded_text_field.dart';
+import '../database/db_connection.dart';
 import '../database/student_db_helper.dart';
 import '../model/student.dart';
 import '../students_info/students_info_provider.dart';
@@ -24,6 +26,12 @@ class _LoginState extends State<Login> {
   bool passValidated = false;
   final studentDbHelper = StudentDbHelper();
   final MyAlertBox alertBox = MyAlertBox();
+
+  @override
+  void initState() {
+    super.initState();
+    _initDb();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +69,7 @@ class _LoginState extends State<Login> {
           children: [
             RoundedTextField(
               labelText: 'Email',
+              autoFocus: true,
               suffixIcon: textFieldSuffixIcon(
                 emailValidated,
                 emailValidated
@@ -87,10 +96,37 @@ class _LoginState extends State<Login> {
               onPressed: onLoginButtonPressed,
               text: 'Login',
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Don't have an account?",
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Signup()),
+                  ),
+                  child: const Text('Register'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _initDb() async {
+    try {
+      await DbConnection.connection;
+    } catch (e) {
+      alertBox.showAlertBox(context, "Database creation error!",
+          disposeAfterMillis: 800);
+    }
   }
 
   Widget textFieldSuffixIcon(bool validated, String tooltip, String fieldName) {
@@ -119,7 +155,10 @@ class _LoginState extends State<Login> {
       final localListContains =
           Provider.of<StudentInfoProvider>(context, listen: false)
               .containsStudent(email);
-      final foundInDb = await studentDbHelper.containsStudent(email);
+      bool foundInDb = false;
+      try {
+        foundInDb = await studentDbHelper.containsStudent(email);
+      } catch (e) {}
       if (localListContains || foundInDb) {
         emailValidated = true;
       } else {
@@ -179,7 +218,10 @@ class _LoginState extends State<Login> {
       }
     } else {
       Student student = result as Student;
-      final foundInDb = await studentDbHelper.containsStudent(email);
+      bool foundInDb = false;
+      try {
+        foundInDb = await studentDbHelper.containsStudent(email);
+      } catch (e) {}
       if (!foundInDb) {
         int? affectedRows = await studentDbHelper.insertStudent(student);
         if (affectedRows! > 0) {

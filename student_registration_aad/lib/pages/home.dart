@@ -14,7 +14,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: Center(
         child: Text(
-          'Welcome ${widget.student.name}',
+          'Welcome ${widget.student.name}!',
           style: const TextStyle(fontSize: 40, color: Colors.blue),
         ),
       ),

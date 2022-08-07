@@ -7,10 +7,12 @@ class RoundedTextField extends StatelessWidget {
     this.isPassword = false,
     this.controller,
     this.suffixIcon,
+    this.autoFocus = false,
   });
   final Function(String) onChanged;
   final String labelText;
   final bool isPassword;
+  final bool autoFocus;
   final TextEditingController? controller;
   final Widget? suffixIcon;
   @override
@@ -21,6 +23,7 @@ class RoundedTextField extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         obscureText: isPassword,
+        autofocus: autoFocus,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),

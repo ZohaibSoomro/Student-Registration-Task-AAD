@@ -6,8 +6,9 @@ class StudentDbHelper {
   static const notFound = "not found!";
   static const passNotMatched = "password not matched!";
   Future<int?> insertStudent(Student student) async {
-    await _createStudentsTable();
     final connection = await DbConnection.connection;
+    await connection.query(_tableCreationQuery);
+    print('Table $studentsTableName created successfully.');
     final result = await connection.query('''
      INSERT INTO $studentsTableName 
      Values('${student.rollNo}','${student.name}','${student.gender}',
@@ -17,9 +18,7 @@ class StudentDbHelper {
     return result.affectedRows;
   }
 
-  Future<void> _createStudentsTable() async {
-    final connection = await DbConnection.connection;
-    await connection.query('''
+  final String _tableCreationQuery = '''
     CREATE TABLE IF NOT EXISTS students(
     rollNo varchar(10),
     name varchar(30),
@@ -30,10 +29,7 @@ class StudentDbHelper {
     address varchar(100),
     PRIMARY KEY(email)
     )
-    ''');
-    print('Table $studentsTableName created successfully.');
-  }
-
+    ''';
   Future<List<Student>> getStudentsList() async {
     List<Student> studentsList = [];
     final connection = await DbConnection.connection;
