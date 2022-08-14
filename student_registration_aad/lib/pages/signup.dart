@@ -81,7 +81,7 @@ class _SignupState extends State<Signup> {
                       'Database updated successfully.',
                       labelColor: Colors.blue,
                     );
-                    _clearTextFields();
+                    _clearFields();
                     setState(() {});
                   },
                   child: const Text('Update Database'),
@@ -356,7 +356,7 @@ class _SignupState extends State<Signup> {
         "Student record with roll no '$rollNo' inserted successfully.",
         labelColor: Colors.blue,
       );
-      _clearTextFields();
+      _clearFields();
     } else {
       alertBox.showAlertBox(
         context,
@@ -366,10 +366,11 @@ class _SignupState extends State<Signup> {
     setState(() {});
   }
 
-  _clearTextFields() {
+  _clearFields() {
     _rollNumberController.clear();
     _nameController.clear();
     _emailController.clear();
+    gender = null;
     _passwordController.clear();
     _ageTextController.clear();
     _addressController.clear();

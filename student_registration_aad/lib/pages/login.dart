@@ -6,7 +6,7 @@ import 'package:student_registration_aad/pages/signup.dart';
 import '../custom_widgets/my_alert_box.dart';
 import '../custom_widgets/rounded_button.dart';
 import '../custom_widgets/rounded_text_field.dart';
-import '../database/db_connection.dart';
+import '../database/student_db_connection.dart';
 import '../database/student_db_helper.dart';
 import '../model/student.dart';
 import '../students_info/students_info_provider.dart';
@@ -122,7 +122,7 @@ class _LoginState extends State<Login> {
 
   void _initDb() async {
     try {
-      await DbConnection.connection;
+      await StudentDbConnection.connection;
     } catch (e) {
       alertBox.showAlertBox(context, "Database creation error!",
           disposeAfterMillis: 800);

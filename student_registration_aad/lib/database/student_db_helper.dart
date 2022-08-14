@@ -1,4 +1,4 @@
-import 'package:student_registration_aad/database/db_connection.dart';
+import 'package:student_registration_aad/database/student_db_connection.dart';
 import 'package:student_registration_aad/model/student.dart';
 
 class StudentDbHelper {
@@ -6,7 +6,7 @@ class StudentDbHelper {
   static const notFound = "not found!";
   static const passNotMatched = "password not matched!";
   Future<int?> insertStudent(Student student) async {
-    final connection = await DbConnection.connection;
+    final connection = await StudentDbConnection.connection;
     await connection.query(_tableCreationQuery);
     print('Table $studentsTableName created successfully.');
     final result = await connection.query('''
@@ -32,7 +32,7 @@ class StudentDbHelper {
     ''';
   Future<List<Student>> getStudentsList() async {
     List<Student> studentsList = [];
-    final connection = await DbConnection.connection;
+    final connection = await StudentDbConnection.connection;
     final records = await connection.query('SELECT * FROM $studentsTableName');
     for (var record in records) {
       Student student = Student(
