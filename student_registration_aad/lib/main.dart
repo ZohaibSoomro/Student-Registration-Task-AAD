@@ -26,3 +26,23 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class Demo extends StatelessWidget {
+  const Demo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: Center(
+          child: TextField(
+            decoration: InputDecoration(
+              label: Center(child: Text('Hello')),
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
